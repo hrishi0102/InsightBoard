@@ -16,12 +16,16 @@ function App() {
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Function to process image with Gemini AI
   const processWithAI = async (imageData) => {
     setIsLoading(true);
     setError(null);
-    setAiAnalysis(null);
+
+    // Open modal immediately to show loading state
+    setIsModalOpen(true);
 
     try {
       const response = await fetch("http://localhost:5000/api/process-image", {
@@ -49,7 +53,6 @@ function App() {
 
   return (
     <div className="App">
-      <h1>React Whiteboard App</h1>
       <div className="whiteboard-container">
         <Toolbar
           canvas={canvas}
@@ -70,6 +73,8 @@ function App() {
             analysis={aiAnalysis}
             isLoading={isLoading}
             error={error}
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
           />
         </div>
       </div>

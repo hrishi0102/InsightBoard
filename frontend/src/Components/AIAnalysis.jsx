@@ -1,51 +1,108 @@
 import React from "react";
+import Modal from "./Modal";
 
-const AIAnalysis = ({ analysis, isLoading, error }) => {
-  if (!analysis && !isLoading && !error) {
-    return null;
-  }
-
+const AIAnalysis = ({ analysis, isLoading, error, isOpen, onClose }) => {
   return (
-    <div
-      className="ai-analysis"
-      style={{
-        padding: "15px",
-        margin: "10px",
-        backgroundColor: "#f8f9fa",
-        border: "1px solid #dee2e6",
-        borderRadius: "5px",
-        maxHeight: "200px",
-        overflowY: "auto",
-        position: "absolute",
-        bottom: "10px",
-        right: "10px",
-        width: "400px",
-        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "10px",
-        }}
-      >
-        <h3 style={{ margin: "0", color: "#8e44ad" }}>AI Analysis</h3>
-        {isLoading && <div>Processing...</div>}
-      </div>
-
-      {error && (
-        <div style={{ color: "#dc3545", marginBottom: "10px" }}>
-          Error: {error}
+    <>
+      {/* Simple floating indicator when loading */}
+      {isLoading && !isOpen && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "20px",
+            right: "20px",
+            padding: "10px 20px",
+            backgroundColor: "#8e44ad",
+            color: "white",
+            borderRadius: "4px",
+            boxShadow: "0 2px 10px rgba(0, 0, 0, 0.2)",
+            zIndex: 100,
+          }}
+        >
+          Analyzing your whiteboard...
         </div>
       )}
 
-      {analysis && (
-        <div>
-          <p style={{ whiteSpace: "pre-line" }}>{analysis}</p>
-        </div>
-      )}
-    </div>
+      {/* Modal for displaying results */}
+      <Modal isOpen={isOpen} onClose={onClose} title="AI Analysis Results">
+        {isLoading ? (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "40px",
+            }}
+          >
+            <div
+              className="loading-spinner"
+              style={{
+                border: "4px solid #f3f3f3",
+                borderTop: "4px solid #8e44ad",
+                borderRadius: "50%",
+                width: "40px",
+                height: "40px",
+                animation: "spin 1s linear infinite",
+                marginRight: "15px",
+              }}
+            ></div>
+            <p style={{ fontSize: "18px", color: "#666" }}>
+              Analyzing your whiteboard...
+            </p>
+          </div>
+        ) : error ? (
+          <div
+            style={{
+              color: "#dc3545",
+              backgroundColor: "#f8d7da",
+              padding: "15px",
+              borderRadius: "4px",
+              marginBottom: "15px",
+            }}
+          >
+            <strong>Error:</strong> {error}
+          </div>
+        ) : analysis ? (
+          <div className="analysis-content">
+            <div
+              style={{
+                backgroundColor: "#f8f9fa",
+                border: "1px solid #dee2e6",
+                borderRadius: "4px",
+                padding: "15px",
+                marginBottom: "15px",
+              }}
+            >
+              <h3
+                style={{
+                  color: "#333",
+                  marginTop: 0,
+                  marginBottom: "10px",
+                  borderBottom: "1px solid #eee",
+                  paddingBottom: "10px",
+                }}
+              >
+                Whiteboard Analysis
+              </h3>
+              <div
+                style={{
+                  whiteSpace: "pre-line",
+                  fontSize: "16px",
+                  lineHeight: "1.6",
+                }}
+              >
+                {analysis}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <p>
+            No analysis available. Draw something on the whiteboard and click
+            "AI Analysis".
+          </p>
+        )}
+      </Modal>
+    </>
   );
 };
 

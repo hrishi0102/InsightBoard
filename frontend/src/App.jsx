@@ -1,23 +1,80 @@
 import React, { useState } from "react";
-import axios from "axios";
+import Canvas from "./Components/Canvas";
+import Toolbar from "./Components/Toolbar";
+import ColorPicker from "./Components/ColorPicker";
+import AIAnalysis from "./Components/AiAnalysis";
+import "./App.css";
 
-const App = () => {
-  const [data, setData] = useState("");
+function App() {
+  // State to store the canvas instance to pass to child components
+  const [canvas, setCanvas] = useState(null);
+  // State to track the active color
+  const [activeColor, setActiveColor] = useState("#000000");
+  // State to track active tool
+  const [activeTool, setActiveTool] = useState(null);
+  // State for AI analysis
+  const [aiAnalysis, setAiAnalysis] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = async () => {
-    const response = await axios.get("http://localhost:3000/health");
-    setData(response.data);
+  // Function to process image with Gemini AI
+  const processWithAI = async (imageData) => {
+    setIsLoading(true);
+    setError(null);
+    setAiAnalysis(null);
+
+    try {
+      const response = await fetch("http://localhost:5000/api/process-image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ imageData }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to process image");
+      }
+
+      const data = await response.json();
+      setAiAnalysis(data.analysis);
+    } catch (err) {
+      console.error("Error processing image with AI:", err);
+      setError(err.message || "An error occurred while processing the image");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div>
-      <h1 className="justify-center text-xl">Hello User</h1>
-      <button onClick={handleSubmit} className="border rounded-sm border-black">
-        Click me
-      </button>
-      <p>{data}</p>
+    <div className="App">
+      <h1>React Whiteboard App</h1>
+      <div className="whiteboard-container">
+        <Toolbar
+          canvas={canvas}
+          activeColor={activeColor}
+          setActiveColor={setActiveColor}
+          activeTool={activeTool}
+          setActiveTool={setActiveTool}
+          processWithAI={processWithAI}
+        />
+        <ColorPicker
+          activeColor={activeColor}
+          setActiveColor={setActiveColor}
+          canvas={canvas}
+        />
+        <div className="canvas-wrapper" style={{ position: "relative" }}>
+          <Canvas setCanvas={setCanvas} />
+          <AIAnalysis
+            analysis={aiAnalysis}
+            isLoading={isLoading}
+            error={error}
+          />
+        </div>
+      </div>
     </div>
   );
-};
+}
 
 export default App;

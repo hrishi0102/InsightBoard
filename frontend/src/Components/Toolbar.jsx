@@ -1,12 +1,26 @@
+// Modified Toolbar.jsx
 import React from "react";
 
-const Toolbar = ({ canvas, activeColor, setActiveColor, processWithAI }) => {
+const Toolbar = ({
+  canvas,
+  activeColor,
+  setActiveColor,
+  activeTool,
+  setActiveTool,
+  processWithAI,
+}) => {
   // Function to toggle drawing mode
   const toggleDrawingMode = () => {
     if (!canvas) return;
 
+    // Disable eraser mode if it was active
+    if (activeTool === "eraser") {
+      disableEraserMode();
+    }
+
     // Toggle the drawing mode
     canvas.isDrawingMode = !canvas.isDrawingMode;
+    setActiveTool(canvas.isDrawingMode ? "draw" : null);
 
     // Adjust brush options if in drawing mode
     if (canvas.isDrawingMode) {
@@ -19,8 +33,12 @@ const Toolbar = ({ canvas, activeColor, setActiveColor, processWithAI }) => {
   const addRectangle = () => {
     if (!canvas) return;
 
-    // Disable drawing mode
+    // Disable drawing mode and eraser mode
     canvas.isDrawingMode = false;
+    if (activeTool === "eraser") {
+      disableEraserMode();
+    }
+    setActiveTool("rectangle");
 
     // Create a new rectangle object
     const rect = new fabric.Rect({
@@ -28,7 +46,7 @@ const Toolbar = ({ canvas, activeColor, setActiveColor, processWithAI }) => {
       top: 100,
       width: 100,
       height: 80,
-      fill: "#fff",
+      fill: "transparent",
       stroke: "#000",
       strokeWidth: 1,
     });
@@ -43,15 +61,19 @@ const Toolbar = ({ canvas, activeColor, setActiveColor, processWithAI }) => {
   const addCircle = () => {
     if (!canvas) return;
 
-    // Disable drawing mode
+    // Disable drawing mode and eraser mode
     canvas.isDrawingMode = false;
+    if (activeTool === "eraser") {
+      disableEraserMode();
+    }
+    setActiveTool("circle");
 
     // Create a new circle object
     const circle = new fabric.Circle({
       left: 100,
       top: 100,
       radius: 50,
-      fill: activeColor,
+      fill: "transparent",
       stroke: "#000",
       strokeWidth: 1,
     });
@@ -66,8 +88,12 @@ const Toolbar = ({ canvas, activeColor, setActiveColor, processWithAI }) => {
   const addText = () => {
     if (!canvas) return;
 
-    // Disable drawing mode
+    // Disable drawing mode and eraser mode
     canvas.isDrawingMode = false;
+    if (activeTool === "eraser") {
+      disableEraserMode();
+    }
+    setActiveTool("text");
 
     // Create a new text object
     const text = new fabric.IText("Type here", {
@@ -84,9 +110,94 @@ const Toolbar = ({ canvas, activeColor, setActiveColor, processWithAI }) => {
     canvas.setActiveObject(text);
   };
 
+  const addArrow = () => {
+    if (!canvas) return;
+
+    // Disable drawing mode and eraser mode
+    canvas.isDrawingMode = false;
+    if (activeTool === "eraser") {
+      disableEraserMode();
+    }
+    setActiveTool("arrow");
+
+    // Create an arrow using a path
+    const arrowPath =
+      "M 0 0 L 200 0 L 200 -10 L 220 10 L 200 30 L 200 20 L 0 20 z";
+
+    const arrow = new fabric.Path(arrowPath, {
+      left: 100,
+      top: 100,
+      fill: activeColor,
+      stroke: "#000",
+      strokeWidth: 0.5,
+      scaleX: 0.5,
+      scaleY: 0.5,
+    });
+
+    // Add the arrow to the canvas
+    canvas.add(arrow);
+    // Make the arrow the active object
+    canvas.setActiveObject(arrow);
+  };
+
+  // Function to enable eraser mode
+  const toggleEraserMode = () => {
+    if (!canvas) return;
+
+    // Check if eraser is already active
+    if (activeTool === "eraser") {
+      disableEraserMode();
+      setActiveTool(null);
+      return;
+    }
+
+    // Disable drawing mode
+    canvas.isDrawingMode = false;
+    setActiveTool("eraser");
+
+    // Set cursor to indicate eraser mode
+    canvas.defaultCursor = "not-allowed";
+
+    // Store the original event handler if needed later
+    const originalMouseDown = canvas.__onMouseDown;
+
+    // Create a handler for object selection in eraser mode
+    canvas.__onMouseDown = function (e) {
+      const target = canvas.findTarget(e);
+      if (target) {
+        canvas.remove(target);
+        canvas.renderAll();
+      }
+    };
+
+    // Store the original handler for later restoration
+    canvas.eraserOriginalMouseDown = originalMouseDown;
+  };
+
+  // Function to disable eraser mode
+  const disableEraserMode = () => {
+    if (!canvas) return;
+
+    // Restore default cursor
+    canvas.defaultCursor = "default";
+
+    // Restore original mouse down handler if it exists
+    if (canvas.eraserOriginalMouseDown) {
+      canvas.__onMouseDown = canvas.eraserOriginalMouseDown;
+      canvas.eraserOriginalMouseDown = null;
+    }
+  };
+
   // Function to clear the canvas
   const clearCanvas = () => {
     if (!canvas) return;
+
+    // Disable eraser mode if active
+    if (activeTool === "eraser") {
+      disableEraserMode();
+      setActiveTool(null);
+    }
+
     canvas.clear();
     canvas.backgroundColor = "#ffffff";
     canvas.renderAll();
@@ -116,6 +227,12 @@ const Toolbar = ({ canvas, activeColor, setActiveColor, processWithAI }) => {
   const handleProcessWithAI = () => {
     if (!canvas) return;
 
+    // Disable eraser mode if active
+    if (activeTool === "eraser") {
+      disableEraserMode();
+      setActiveTool(null);
+    }
+
     // Generate data URL from canvas
     const imageData = canvas.toDataURL({
       format: "png",
@@ -136,10 +253,45 @@ const Toolbar = ({ canvas, activeColor, setActiveColor, processWithAI }) => {
         gap: "10px",
       }}
     >
-      <button onClick={toggleDrawingMode}>Draw</button>
-      <button onClick={addRectangle}>Rectangle</button>
-      <button onClick={addCircle}>Circle</button>
-      <button onClick={addText}>Text</button>
+      <button
+        onClick={toggleDrawingMode}
+        className={activeTool === "draw" ? "active" : ""}
+      >
+        Draw
+      </button>
+      <button
+        onClick={toggleEraserMode}
+        className={activeTool === "eraser" ? "active" : ""}
+        style={{
+          backgroundColor: activeTool === "eraser" ? "#2b6cb0" : "#4285f4",
+        }}
+      >
+        Eraser
+      </button>
+      <button
+        onClick={addRectangle}
+        className={activeTool === "rectangle" ? "active" : ""}
+      >
+        Rectangle
+      </button>
+      <button
+        onClick={addCircle}
+        className={activeTool === "circle" ? "active" : ""}
+      >
+        Circle
+      </button>
+      <button
+        onClick={addText}
+        className={activeTool === "text" ? "active" : ""}
+      >
+        Text
+      </button>
+      <button
+        onClick={addArrow}
+        className={activeTool === "arrow" ? "active" : ""}
+      >
+        Arrow
+      </button>
       <button onClick={clearCanvas}>Clear</button>
       <button onClick={saveCanvasAsImage}>Save as Image</button>
       <button

@@ -155,8 +155,8 @@ const Toolbar = ({
     canvas.isDrawingMode = false;
     setActiveTool("eraser");
 
-    // Set cursor to indicate eraser mode
-    canvas.defaultCursor = "not-allowed";
+    // Set cursor to indicate eraser mode - using a more appropriate cursor
+    canvas.defaultCursor = "cell"; // Alternative options: "crosshair", "pointer", etc.
 
     // Store the original event handler if needed later
     const originalMouseDown = canvas.__onMouseDown;

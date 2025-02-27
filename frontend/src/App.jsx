@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Canvas from "./Components/Canvas";
-import Toolbar from "./Components/Toolbar";
-import ColorPicker from "./Components/ColorPicker";
+import Navbar from "./Components/Navbar";
 import AIAnalysis from "./Components/AiAnalysis";
 import "./App.css";
 
@@ -54,18 +53,13 @@ function App() {
   return (
     <div className="App">
       <div className="whiteboard-container">
-        <Toolbar
+        <Navbar
           canvas={canvas}
           activeColor={activeColor}
           setActiveColor={setActiveColor}
           activeTool={activeTool}
           setActiveTool={setActiveTool}
           processWithAI={processWithAI}
-        />
-        <ColorPicker
-          activeColor={activeColor}
-          setActiveColor={setActiveColor}
-          canvas={canvas}
         />
         <div className="canvas-wrapper" style={{ position: "relative" }}>
           <Canvas setCanvas={setCanvas} />

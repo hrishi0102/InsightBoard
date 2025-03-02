@@ -193,6 +193,48 @@ h1 {
   border-bottom: 1px solid #ddd;
 }
 
+.prompt-modal-content {
+  font-family: Arial, sans-serif;
+}
+
+.option-container {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.option-container label {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.option-container label:last-child {
+  margin-bottom: 0;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: #8e44ad;
+  box-shadow: 0 0 0 2px rgba(142, 68, 173, 0.2);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 @keyframes modalFadeIn {
   from {
     opacity: 0;

@@ -15,14 +15,21 @@ app.use(bodyParser.json({ limit: "50mb" })); // Increased limit for image data
 // Initialize Gemini API
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// Default prompt if none provided
+const DEFAULT_PROMPT =
+  "Analyze this whiteboard image. Identify drawn elements, text, and diagrams. Provide a detailed explanation of what you see and any insights about the content. If you find any equations, solve and return the answer. If you find an diagram which represents a real-world mathematical problem, solve it and return the answer with steps. Whatever you infer, give detailed anaylsis and an answer if possible.";
+
 // Route to process image with Gemini
 app.post("/api/process-image", async (req, res) => {
   try {
-    const { imageData } = req.body;
+    const { imageData, prompt } = req.body;
 
     if (!imageData) {
       return res.status(400).json({ error: "No image data provided" });
     }
+
+    // Use provided prompt or default prompt
+    const userPrompt = prompt || DEFAULT_PROMPT;
 
     // Remove the Data URL prefix to get just the base64 data
     const base64Image = imageData.split(",")[1];
@@ -39,7 +46,7 @@ app.post("/api/process-image", async (req, res) => {
         },
       },
       {
-        text: "Analyze this whiteboard image. Identify drawn elements, text, and diagrams. Provide a detailed explanation of what you see and any insights about the content. If you find any equations, solve and return the answer. If you find an diagram which represents a real-world mathematical problem, solve it and return the answer with steps. Whatever you infer, give detailed anaylsis and an answer if possible.",
+        text: userPrompt,
       },
     ]);
 

@@ -34,6 +34,14 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const DEFAULT_PROMPT =
   "Analyze this whiteboard image. Identify drawn elements, text, and diagrams. Provide a detailed explanation of what you see and any insights about the content. If you find any equations, solve and return the answer. If you find an diagram which represents a real-world mathematical problem, solve it and return the answer with steps. Whatever you infer, give detailed anaylsis and an answer if possible.";
 
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
+app.get("/health", (req, res) => {
+  res.send("Server is Running :))");
+});
+
 // Apply rate limiting to the AI processing route
 app.post("/api/process-image", apiLimiter, async (req, res) => {
   try {

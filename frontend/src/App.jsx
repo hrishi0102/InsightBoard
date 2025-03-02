@@ -21,6 +21,9 @@ function App() {
   // Store the image data temporarily
   const [currentImageData, setCurrentImageData] = useState(null);
 
+  // Get the API URL from environment variables
+  const API_URL = import.meta.env.VITE_BACKEND_URL;
+
   // The default prompt
   const defaultPrompt =
     "Analyze this whiteboard image. Identify drawn elements, text, and diagrams. Provide a detailed explanation of what you see and any insights about the content. If you find any equations, solve and return the answer. If you find an diagram which represents a real-world mathematical problem, solve it and return the answer with steps. Whatever you infer, give detailed anaylsis and an answer if possible.";
@@ -49,7 +52,7 @@ function App() {
     setIsModalOpen(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/process-image", {
+      const response = await fetch(`${API_URL}/api/process-image`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -65,7 +68,7 @@ function App() {
       if (!response.ok) {
         // Check if the error is due to rate limiting
         if (response.status === 429) {
-          const retryAfter = data.retryAfter || 120; // Default to 2 minutes if not provided
+          const retryAfter = data.retryAfter || 900; // Default to 15 minutes if not provided
           const minutes = Math.ceil(retryAfter / 60);
           throw new Error(
             `Rate limit exceeded. Please try again in ${minutes} ${

@@ -1,11 +1,31 @@
 import React from "react";
 import Modal from "./Modal";
+import PromptInputModal from "./PromptInputModal";
 
-const AIAnalysis = ({ analysis, isLoading, error, isOpen, onClose }) => {
+const AIAnalysis = ({
+  analysis,
+  isLoading,
+  error,
+  isOpen,
+  onClose,
+  showPromptModal,
+  onPromptModalClose,
+  onPromptSubmit,
+  defaultPrompt,
+}) => {
   return (
     <>
+      {/* Prompt Input Modal */}
+      <PromptInputModal
+        isOpen={showPromptModal}
+        onClose={onPromptModalClose}
+        onSubmit={onPromptSubmit}
+        isLoading={isLoading}
+        defaultPrompt={defaultPrompt}
+      />
+
       {/* Simple floating indicator when loading */}
-      {isLoading && !isOpen && (
+      {isLoading && !isOpen && !showPromptModal && (
         <div
           style={{
             position: "fixed",

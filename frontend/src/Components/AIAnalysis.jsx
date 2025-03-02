@@ -2,7 +2,7 @@ import React from "react";
 import Modal from "./Modal";
 import PromptInputModal from "./PromptInputModal";
 
-const AIAnalysis = ({
+const AiAnalysis = ({
   analysis,
   isLoading,
   error,
@@ -168,4 +168,4 @@ const AIAnalysis = ({
   );
 };
 
-export default AIAnalysis;
+export default AiAnalysis;

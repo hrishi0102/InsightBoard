@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Canvas from "./Components/Canvas";
 import Navbar from "./Components/Navbar";
-import AIAnalysis from "./Components/AiAnalysis";
+import AiAnalysis from "./Components/AiAnalysis";
 import "./App.css";
 
 function App() {
@@ -102,7 +102,7 @@ function App() {
         />
         <div className="canvas-wrapper" style={{ position: "relative" }}>
           <Canvas setCanvas={setCanvas} />
-          <AIAnalysis
+          <AiAnalysis
             analysis={aiAnalysis}
             isLoading={isLoading}
             error={error}

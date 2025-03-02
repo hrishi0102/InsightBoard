@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Canvas from "./Components/Canvas";
 import Navbar from "./Components/Navbar";
-import AiAnalysis from "./Components/AiAnalysis";
+import AiAnalysis from "./Components/AIAnalysis";
 import "./App.css";
 
 function App() {

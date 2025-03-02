@@ -13,6 +13,9 @@ const AIAnalysis = ({
   onPromptSubmit,
   defaultPrompt,
 }) => {
+  // Determine if error is a rate limit error
+  const isRateLimitError = error && error.toLowerCase().includes("rate limit");
+
   return (
     <>
       {/* Prompt Input Modal */}
@@ -73,14 +76,53 @@ const AIAnalysis = ({
         ) : error ? (
           <div
             style={{
-              color: "#dc3545",
-              backgroundColor: "#f8d7da",
+              color: isRateLimitError ? "#856404" : "#dc3545",
+              backgroundColor: isRateLimitError ? "#fff3cd" : "#f8d7da",
               padding: "15px",
               borderRadius: "4px",
               marginBottom: "15px",
+              border: `1px solid ${isRateLimitError ? "#ffeeba" : "#f5c6cb"}`,
             }}
           >
-            <strong>Error:</strong> {error}
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                marginBottom: "8px",
+              }}
+            >
+              {isRateLimitError ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  style={{ marginRight: "10px", fill: "#856404" }}
+                >
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  style={{ marginRight: "10px", fill: "#dc3545" }}
+                >
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
+                </svg>
+              )}
+              <strong>
+                {isRateLimitError ? "Usage Limit Reached" : "Error"}
+              </strong>
+            </div>
+            <p>{error}</p>
+            {isRateLimitError && (
+              <p style={{ marginTop: "10px", fontSize: "14px" }}>
+                To prevent abuse, we limit the number of AI analyses per user.
+                Please try again later.
+              </p>
+            )}
           </div>
         ) : analysis ? (
           <div className="analysis-content">

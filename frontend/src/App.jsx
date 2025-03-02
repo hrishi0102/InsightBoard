@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Canvas from "./Components/Canvas";
 import Navbar from "./Components/Navbar";
-import AIAnalysis from "./Components/AIAnalysis";
+import AIAnalysis from "./Components/AiAnalysis";
 import "./App.css";
 
 function App() {
@@ -60,12 +60,23 @@ function App() {
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to process image");
+        // Check if the error is due to rate limiting
+        if (response.status === 429) {
+          const retryAfter = data.retryAfter || 120; // Default to 2 minutes if not provided
+          const minutes = Math.ceil(retryAfter / 60);
+          throw new Error(
+            `Rate limit exceeded. Please try again in ${minutes} ${
+              minutes === 1 ? "minute" : "minutes"
+            }.`
+          );
+        } else {
+          throw new Error(data.error || "Failed to process image");
+        }
       }
 
-      const data = await response.json();
       setAiAnalysis(data.analysis);
     } catch (err) {
       console.error("Error processing image with AI:", err);

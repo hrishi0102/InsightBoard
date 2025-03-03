@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Canvas from "./Components/Canvas";
 import Navbar from "./Components/Navbar";
 import AiAnalysis from "./Components/AIAnalysis";
@@ -20,9 +20,38 @@ function App() {
   const [showPromptModal, setShowPromptModal] = useState(false);
   // Store the image data temporarily
   const [currentImageData, setCurrentImageData] = useState(null);
+  // Track device orientation and size
+  const [isMobile, setIsMobile] = useState(false);
+  const [isLandscape, setIsLandscape] = useState(false);
 
   // Get the API URL from environment variables
   const API_URL = import.meta.env.VITE_BACKEND_URL;
+
+  // Detect device and orientation
+  useEffect(() => {
+    const checkDeviceAndOrientation = () => {
+      const mobile = window.innerWidth <= 768;
+      const landscape = window.innerWidth > window.innerHeight;
+
+      setIsMobile(mobile);
+      setIsLandscape(landscape);
+    };
+
+    // Initial check
+    checkDeviceAndOrientation();
+
+    // Add event listeners for resize and orientation change
+    window.addEventListener("resize", checkDeviceAndOrientation);
+    window.addEventListener("orientationchange", checkDeviceAndOrientation);
+
+    return () => {
+      window.removeEventListener("resize", checkDeviceAndOrientation);
+      window.removeEventListener(
+        "orientationchange",
+        checkDeviceAndOrientation
+      );
+    };
+  }, []);
 
   // The default prompt
   const defaultPrompt =
@@ -89,6 +118,21 @@ function App() {
     }
   };
 
+  // Prevent browser bounce effects on touch devices
+  useEffect(() => {
+    const preventPullToRefresh = (e) => {
+      e.preventDefault();
+    };
+
+    document.body.addEventListener("touchmove", preventPullToRefresh, {
+      passive: false,
+    });
+
+    return () => {
+      document.body.removeEventListener("touchmove", preventPullToRefresh);
+    };
+  }, []);
+
   return (
     <div className="App">
       <div className="whiteboard-container">
@@ -99,8 +143,16 @@ function App() {
           activeTool={activeTool}
           setActiveTool={setActiveTool}
           processWithAI={handleAIAnalysisClick}
+          isMobile={isMobile}
+          isLandscape={isLandscape}
         />
-        <div className="canvas-wrapper" style={{ position: "relative" }}>
+        <div
+          className="canvas-wrapper"
+          style={{
+            position: "relative",
+            height: isMobile && isLandscape ? "100vh" : undefined,
+          }}
+        >
           <Canvas setCanvas={setCanvas} />
           <AiAnalysis
             analysis={aiAnalysis}

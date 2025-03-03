@@ -7,6 +7,8 @@ const Navbar = ({
   activeTool,
   setActiveTool,
   processWithAI,
+  isMobile,
+  isLandscape,
 }) => {
   // Tool functions (moved from Toolbar.jsx)
 
@@ -91,8 +93,8 @@ const Navbar = ({
 
     // Create a new rectangle object with transparent fill
     const rect = new fabric.Rect({
-      left: 100,
-      top: 100,
+      left: canvas.width / 2 - 50,
+      top: canvas.height / 2 - 40,
       width: 100,
       height: 80,
       fill: "transparent",
@@ -119,8 +121,8 @@ const Navbar = ({
 
     // Create a new circle object with transparent fill
     const circle = new fabric.Circle({
-      left: 100,
-      top: 100,
+      left: canvas.width / 2 - 50,
+      top: canvas.height / 2 - 50,
       radius: 50,
       fill: "transparent",
       stroke: activeColor,
@@ -149,8 +151,8 @@ const Navbar = ({
       "M 0 0 L 200 0 L 200 -10 L 220 10 L 200 30 L 200 20 L 0 20 z";
 
     const arrow = new fabric.Path(arrowPath, {
-      left: 100,
-      top: 100,
+      left: canvas.width / 2 - 110,
+      top: canvas.height / 2 - 10,
       fill: activeColor,
       stroke: "#000",
       strokeWidth: 1,
@@ -177,8 +179,8 @@ const Navbar = ({
 
     // Create a new text object
     const text = new fabric.IText("Type here", {
-      left: 100,
-      top: 100,
+      left: canvas.width / 2 - 50,
+      top: canvas.height / 2 - 10,
       fontFamily: "Arial",
       fill: activeColor,
       fontSize: 20,
@@ -293,8 +295,11 @@ const Navbar = ({
     }
   };
 
+  // Determine if we should show a more compact UI for mobile
+  const compactUI = isMobile || (isLandscape && window.innerHeight < 500);
+
   return (
-    <div className="navbar">
+    <div className={`navbar ${compactUI ? "compact" : ""}`}>
       <div className="navbar-content">
         <div className="tool-section">
           <div className="tool-group">
@@ -306,8 +311,8 @@ const Navbar = ({
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                width="20"
-                height="20"
+                width={compactUI ? "18" : "20"}
+                height={compactUI ? "18" : "20"}
               >
                 <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
               </svg>
@@ -322,8 +327,8 @@ const Navbar = ({
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                width="20"
-                height="20"
+                width={compactUI ? "18" : "20"}
+                height={compactUI ? "18" : "20"}
               >
                 <path d="M15.14 3c-.51 0-1.02.2-1.41.59L2.59 14.73c-.78.77-.78 2.04 0 2.83L5.03 20h7.66l8.72-8.73c.79-.78.79-2.04 0-2.83l-4.85-4.85c-.39-.39-.9-.59-1.42-.59zm-3.74 14.87L4.41 10.87 10.84 4.44l7 7-6.44 6.43z" />
               </svg>
@@ -341,8 +346,8 @@ const Navbar = ({
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                width="20"
-                height="20"
+                width={compactUI ? "18" : "20"}
+                height={compactUI ? "18" : "20"}
               >
                 <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z" />
               </svg>
@@ -357,8 +362,8 @@ const Navbar = ({
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                width="20"
-                height="20"
+                width={compactUI ? "18" : "20"}
+                height={compactUI ? "18" : "20"}
               >
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z" />
               </svg>
@@ -373,8 +378,8 @@ const Navbar = ({
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                width="20"
-                height="20"
+                width={compactUI ? "18" : "20"}
+                height={compactUI ? "18" : "20"}
               >
                 <path d="M16.01 11H4v2h12.01v3L20 12l-3.99-4z" />
               </svg>
@@ -387,8 +392,8 @@ const Navbar = ({
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                width="20"
-                height="20"
+                width={compactUI ? "18" : "20"}
+                height={compactUI ? "18" : "20"}
               >
                 <path d="M5 4v3h5.5v12h3V7H19V4z" />
               </svg>
@@ -404,8 +409,8 @@ const Navbar = ({
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                width="20"
-                height="20"
+                width={compactUI ? "18" : "20"}
+                height={compactUI ? "18" : "20"}
               >
                 <path d="M19 4h-3.5l-1-1h-5l-1 1H5v2h14zM6 7v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6zm8 7v4h-4v-4H8l4-4 4 4h-2z" />
               </svg>
@@ -418,8 +423,8 @@ const Navbar = ({
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                width="20"
-                height="20"
+                width={compactUI ? "18" : "20"}
+                height={compactUI ? "18" : "20"}
               >
                 <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2v9.67z" />
               </svg>
@@ -434,8 +439,8 @@ const Navbar = ({
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
+                  width={compactUI ? "18" : "20"}
+                  height={compactUI ? "18" : "20"}
                   viewBox="0 0 48 48"
                 >
                   <radialGradient
@@ -477,15 +482,17 @@ const Navbar = ({
                     d="M39.21,44.246l-0.494,1.132	c-0.362,0.829-1.51,0.829-1.871,0l-0.494-1.132c-0.881-2.019-2.467-3.627-4.447-4.506l-1.522-0.676	c-0.823-0.366-0.823-1.562,0-1.928l1.437-0.639c2.03-0.902,3.645-2.569,4.511-4.657l0.507-1.224c0.354-0.853,1.533-0.853,1.886,0	l0.507,1.224c0.866,2.088,2.481,3.755,4.511,4.657l1.437,0.639c0.823,0.366,0.823,1.562,0,1.928l-1.522,0.676	C41.677,40.619,40.091,42.227,39.21,44.246z"
                   ></path>
                 </svg>
-                <span
-                  style={{
-                    fontSize: "13px",
-                    fontWeight: "500",
-                    color: "#5a67d8",
-                  }}
-                >
-                  AI
-                </span>
+                {!compactUI && (
+                  <span
+                    style={{
+                      fontSize: "13px",
+                      fontWeight: "500",
+                      color: "#5a67d8",
+                    }}
+                  >
+                    AI
+                  </span>
+                )}
               </div>
             </button>
           </div>
@@ -498,7 +505,11 @@ const Navbar = ({
               className={`color-circle ${
                 activeColor === color ? "active" : ""
               }`}
-              style={{ backgroundColor: color }}
+              style={{
+                backgroundColor: color,
+                width: compactUI ? "20px" : "24px",
+                height: compactUI ? "20px" : "24px",
+              }}
               onClick={() => handleColorChange(color)}
               title={color}
             />

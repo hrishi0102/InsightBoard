@@ -22,6 +22,9 @@ const Modal = ({ isOpen, onClose, title, children }) => {
     };
   }, [isOpen, onClose]);
 
+  // Handle device type
+  const isMobile = window.innerWidth <= 768;
+
   if (!isOpen) return null;
 
   // Close modal when clicking on backdrop (outside the modal content)
@@ -45,7 +48,8 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        zIndex: 1000,
+        zIndex: 2000, // Higher z-index to ensure it appears above all content
+        padding: isMobile ? "10px" : "20px",
       }}
     >
       <div
@@ -54,9 +58,9 @@ const Modal = ({ isOpen, onClose, title, children }) => {
           backgroundColor: "white",
           borderRadius: "8px",
           boxShadow: "0 4px 20px rgba(0, 0, 0, 0.2)",
-          width: "80%",
+          width: isMobile ? "95%" : "80%",
           maxWidth: "600px",
-          maxHeight: "80vh",
+          maxHeight: isMobile ? "90vh" : "80vh",
           display: "flex",
           flexDirection: "column",
           animation: "modalFadeIn 0.3s",
@@ -68,11 +72,17 @@ const Modal = ({ isOpen, onClose, title, children }) => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: "16px 20px",
+            padding: isMobile ? "12px 16px" : "16px 20px",
             borderBottom: "1px solid #eee",
           }}
         >
-          <h2 style={{ margin: 0, color: "#8e44ad", fontSize: "1.5rem" }}>
+          <h2
+            style={{
+              margin: 0,
+              color: "#8e44ad",
+              fontSize: isMobile ? "1.2rem" : "1.5rem",
+            }}
+          >
             {title}
           </h2>
           <button
@@ -104,9 +114,10 @@ const Modal = ({ isOpen, onClose, title, children }) => {
         <div
           className="modal-body"
           style={{
-            padding: "20px",
+            padding: isMobile ? "16px" : "20px",
             overflowY: "auto",
             lineHeight: "1.6",
+            WebkitOverflowScrolling: "touch", // Smooth scrolling on iOS
           }}
         >
           {children}

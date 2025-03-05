@@ -1,10 +1,5 @@
 # InsightBoard : Interactive Whiteboard with AI Analysis
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![React](https://img.shields.io/badge/React-19.0.0-blue.svg)
-![Fabric.js](https://img.shields.io/badge/Fabric.js-5.0.0-brightgreen.svg)
-![Gemini AI](https://img.shields.io/badge/Gemini-1.5_Pro-purple.svg)
-
 A modern, interactive whiteboard application with real-time AI analysis capabilities. Draw diagrams, equations, flowcharts then get instant AI feedback and analysis.
 
 ## ✨ Features

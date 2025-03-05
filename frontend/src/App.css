@@ -7,6 +7,12 @@ html {
   overflow: hidden;
   touch-action: none; /* Prevent browser handling of touch gestures */
   position: fixed; /* Prevent iOS Safari bounce effect */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  background-color: #121212;
+  color: #f8f8f8;
 }
 
 .App {
@@ -16,6 +22,14 @@ html {
   display: flex;
   flex-direction: column;
   touch-action: none;
+  background-color: #ffffff;
+  color: #333333;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark .App {
+  background-color: #121212;
+  color: #f8f8f8;
 }
 
 /* Responsive navbar */
@@ -33,6 +47,12 @@ html {
   max-width: 90%;
   overflow-x: auto; /* Allow horizontal scrolling for small screens */
   -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark .navbar {
+  background-color: #2a2a2a;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .navbar-content {
@@ -53,6 +73,11 @@ html {
   gap: 8px;
   padding-right: 16px;
   border-right: 1px solid #eee;
+  transition: border-color 0.3s ease;
+}
+
+.dark .tool-group {
+  border-right: 1px solid #444;
 }
 
 .tool-group:last-child {
@@ -73,8 +98,16 @@ html {
   -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
 }
 
+.dark .tool-button {
+  border: 1px solid #444;
+}
+
 .tool-button:hover {
   background-color: #f5f5f5;
+}
+
+.dark .tool-button:hover {
+  background-color: #3a3a3a;
 }
 
 .tool-button.active {
@@ -82,12 +115,30 @@ html {
   border-color: #1890ff;
 }
 
+.dark .tool-button.active {
+  background-color: #153450;
+  border-color: #1890ff;
+}
+
 .tool-button svg {
   fill: #666;
+  transition: fill 0.3s ease;
+}
+
+.dark .tool-button svg {
+  fill: #aaa;
 }
 
 .tool-button.active svg {
   fill: #1890ff;
+}
+
+.theme-toggle {
+  transition: all 0.3s ease;
+}
+
+.dark .theme-toggle svg {
+  fill: #ffc107;
 }
 
 .ai-button {
@@ -98,6 +149,11 @@ html {
   transition: all 0.2s ease !important;
 }
 
+.dark .ai-button {
+  background-color: #2a2a2a !important;
+  border: 1px solid #444 !important;
+}
+
 .ai-button:hover {
   background-color: #f7f9ff !important;
   padding: 2px;
@@ -106,8 +162,18 @@ html {
   box-shadow: 0 2px 5px rgba(90, 103, 216, 0.1) !important;
 }
 
+.dark .ai-button:hover {
+  background-color: #3a3a3a !important;
+  border-color: #555 !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3) !important;
+}
+
 .ai-button svg {
   fill: white !important;
+}
+
+.dark .ai-button span {
+  color: #8ba3ff !important;
 }
 
 .color-section {
@@ -212,6 +278,12 @@ h1 {
   border-radius: 8px;
   padding: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dark .zoom-controls {
+  background-color: #2a2a2a;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 .zoom-button {
@@ -230,8 +302,18 @@ h1 {
   -webkit-tap-highlight-color: transparent;
 }
 
+.dark .zoom-button {
+  border: 1px solid #444;
+  background-color: #2a2a2a;
+  color: #aaa;
+}
+
 .zoom-button:hover {
   background-color: #f5f5f5;
+}
+
+.dark .zoom-button:hover {
+  background-color: #3a3a3a;
 }
 
 /* Media queries for responsive design */
@@ -312,6 +394,12 @@ h1 {
   display: flex;
   justify-content: center;
   border-bottom: 1px solid #ddd;
+  transition: background-color 0.3s ease, border-bottom 0.3s ease;
+}
+
+.dark .color-picker {
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #444;
 }
 
 .prompt-modal-content {
@@ -323,6 +411,12 @@ h1 {
   border-radius: 8px;
   padding: 16px;
   border: 1px solid #e5e7eb;
+  transition: background-color 0.3s ease, border 0.3s ease;
+}
+
+.dark .option-container {
+  background-color: #2a2a2a;
+  border: 1px solid #444;
 }
 
 .option-container label {
@@ -334,6 +428,16 @@ h1 {
 
 .option-container label:last-child {
   margin-bottom: 0;
+}
+
+textarea {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+.dark textarea {
+  background-color: #333;
+  color: #f8f8f8;
+  border-color: #555;
 }
 
 textarea:focus {
@@ -350,12 +454,25 @@ button:disabled {
 /* Fix modals on mobile */
 .modal-backdrop {
   z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5);
+  transition: background-color 0.3s ease;
+}
+
+.dark .modal-backdrop {
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .modal-content {
   width: 90%;
   max-width: 500px;
   max-height: 80vh;
+  background-color: white;
+  transition: background-color 0.3s ease;
+}
+
+.dark .modal-content {
+  background-color: #222;
+  color: #f8f8f8;
 }
 
 .modal-body {

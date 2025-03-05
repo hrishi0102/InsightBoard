@@ -1,6 +1,7 @@
 import React from "react";
 import Modal from "./Modal";
 import PromptInputModal from "./PromptInputModal";
+import { useTheme } from "../context/ThemeContext";
 
 const AiAnalysis = ({
   analysis,
@@ -13,6 +14,9 @@ const AiAnalysis = ({
   onPromptSubmit,
   defaultPrompt,
 }) => {
+  // Get theme context
+  const { darkMode } = useTheme();
+  
   // Determine if error is a rate limit error
   const isRateLimitError = error && error.toLowerCase().includes("rate limit");
 
@@ -60,16 +64,21 @@ const AiAnalysis = ({
             <div
               className="loading-spinner"
               style={{
-                border: "4px solid #f3f3f3",
-                borderTop: "4px solid #8e44ad",
+                border: darkMode ? "4px solid #333" : "4px solid #f3f3f3",
+                borderTop: darkMode ? "4px solid #a076c5" : "4px solid #8e44ad",
                 borderRadius: "50%",
                 width: "40px",
                 height: "40px",
                 animation: "spin 1s linear infinite",
                 marginRight: "15px",
+                transition: "border 0.3s ease",
               }}
             ></div>
-            <p style={{ fontSize: "18px", color: "#666" }}>
+            <p style={{ 
+              fontSize: "18px", 
+              color: darkMode ? "#aaa" : "#666",
+              transition: "color 0.3s ease",
+            }}>
               Analyzing your whiteboard...
             </p>
           </div>
@@ -128,20 +137,22 @@ const AiAnalysis = ({
           <div className="analysis-content">
             <div
               style={{
-                backgroundColor: "#f8f9fa",
-                border: "1px solid #dee2e6",
+                backgroundColor: darkMode ? "#2a2a2a" : "#f8f9fa",
+                border: darkMode ? "1px solid #444" : "1px solid #dee2e6",
                 borderRadius: "4px",
                 padding: "15px",
                 marginBottom: "15px",
+                transition: "background-color 0.3s ease, border 0.3s ease",
               }}
             >
               <h3
                 style={{
-                  color: "#333",
+                  color: darkMode ? "#e1e1e1" : "#333",
                   marginTop: 0,
                   marginBottom: "10px",
-                  borderBottom: "1px solid #eee",
+                  borderBottom: darkMode ? "1px solid #444" : "1px solid #eee",
                   paddingBottom: "10px",
+                  transition: "color 0.3s ease, border-bottom 0.3s ease",
                 }}
               >
                 Whiteboard Analysis
@@ -151,6 +162,8 @@ const AiAnalysis = ({
                   whiteSpace: "pre-line",
                   fontSize: "16px",
                   lineHeight: "1.6",
+                  color: darkMode ? "#f0f0f0" : "inherit",
+                  transition: "color 0.3s ease",
                 }}
               >
                 {analysis}

@@ -1,7 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { fabric } from "fabric";
+import { useTheme } from "../context/ThemeContext";
 
 const Canvas = ({ setCanvas }) => {
+  // Get theme context
+  const { darkMode } = useTheme();
   // Reference to the canvas element
   const canvasRef = useRef(null);
   // Reference to store the fabric canvas instance
@@ -51,7 +54,7 @@ const Canvas = ({ setCanvas }) => {
       fabricCanvasRef.current = new fabric.Canvas(canvasRef.current, {
         width: canvasWidth,
         height: canvasHeight,
-        backgroundColor: "#ffffff",
+        backgroundColor: darkMode ? "#1e1e1e" : "#ffffff",
         preserveObjectStacking: true,
       });
 
@@ -61,6 +64,10 @@ const Canvas = ({ setCanvas }) => {
       // Resize existing canvas
       fabricCanvasRef.current.setWidth(canvasWidth);
       fabricCanvasRef.current.setHeight(canvasHeight);
+      fabricCanvasRef.current.setBackgroundColor(
+        darkMode ? "#1e1e1e" : "#ffffff", 
+        fabricCanvasRef.current.renderAll.bind(fabricCanvasRef.current)
+      );
       fabricCanvasRef.current.calcOffset();
       fabricCanvasRef.current.renderAll();
     }
@@ -75,7 +82,7 @@ const Canvas = ({ setCanvas }) => {
         fabricCanvasRef.current = null;
       }
     };
-  }, [dimensions, setCanvas]); // Dependencies include dimensions for canvas resizing
+  }, [dimensions, setCanvas, darkMode]); // Dependencies include dimensions and dark mode
 
   // Apply zoom when zoom level changes
   useEffect(() => {

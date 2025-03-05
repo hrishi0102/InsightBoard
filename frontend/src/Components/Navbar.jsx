@@ -1,4 +1,6 @@
 import React from "react";
+import ThemeToggle from "./ThemeToggle";
+import { useTheme } from "../context/ThemeContext";
 
 const Navbar = ({
   canvas,
@@ -10,6 +12,8 @@ const Navbar = ({
   isMobile,
   isLandscape,
 }) => {
+  // Get theme context
+  const { darkMode } = useTheme();
   // Tool functions (moved from Toolbar.jsx)
 
   // Function to toggle drawing mode
@@ -203,7 +207,7 @@ const Navbar = ({
     }
 
     canvas.clear();
-    canvas.backgroundColor = "#ffffff";
+    canvas.backgroundColor = darkMode ? "#1e1e1e" : "#ffffff";
     canvas.renderAll();
   };
 
@@ -429,6 +433,7 @@ const Navbar = ({
                 <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2v9.67z" />
               </svg>
             </button>
+            <ThemeToggle compactUI={compactUI} />
             <button
               onClick={handleProcessWithAI}
               className="tool-button ai-button"

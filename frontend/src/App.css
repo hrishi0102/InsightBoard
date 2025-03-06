@@ -32,6 +32,11 @@ html {
   margin: 0;
   padding: 0;
   overflow: hidden;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .dark .App {
@@ -57,6 +62,22 @@ html {
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   white-space: nowrap; /* Prevent wrapping of navbar items */
   scrollbar-width: thin; /* Thin scrollbar for Firefox */
+  -ms-overflow-style: -ms-autohiding-scrollbar; /* Hide scrollbar by default in Edge */
+}
+
+/* Make sure the scrollbar works on mobile */
+.navbar::-webkit-scrollbar {
+  height: 4px;
+  background: transparent;
+}
+
+.navbar::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.dark .navbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .dark .navbar {
@@ -209,13 +230,44 @@ html {
   transform: scale(1.15);
 }
 
-/* Make sure the canvas is below the navbar */
+.dark .color-circle.active {
+  border-color: #f0f0f0;
+}
+
+/* Canvas wrapper must take full screen */
 .canvas-wrapper {
-  padding-top: 70px;
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100vw;
-  height: calc(100vh - 70px);
-  position: relative;
+  height: 100vh;
   overflow: hidden;
+  touch-action: none;
+}
+
+.whiteboard-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  touch-action: none;
+}
+
+.canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+}
+
+.canvas-container canvas {
+  position: absolute !important; 
   touch-action: none;
 }
 
@@ -224,16 +276,6 @@ h1 {
   padding: 10px;
   background-color: #f0f0f0;
   border-bottom: 1px solid #ddd;
-}
-
-.whiteboard-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  touch-action: none;
 }
 
 .toolbar {
@@ -264,15 +306,6 @@ h1 {
 .toolbar button.active {
   background-color: #2b6cb0;
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-.canvas-container {
-  flex: 1;
-  position: relative;
-  margin: 0 !important;
-  border: none !important;
-  width: 100%;
-  touch-action: none;
 }
 
 /* Zoom controls */
@@ -323,97 +356,6 @@ h1 {
 
 .dark .zoom-button:hover {
   background-color: #3a3a3a;
-}
-
-/* Media queries for responsive design */
-@media (max-width: 768px) {
-  .navbar {
-    top: 10px;
-    padding: 8px;
-  }
-
-  .tool-button {
-    width: 36px;
-    height: 36px;
-  }
-
-  .color-circle {
-    width: 20px;
-    height: 20px;
-  }
-
-  .zoom-controls {
-    bottom: 10px;
-    right: 10px;
-  }
-
-  .zoom-button {
-    width: 36px;
-    height: 36px;
-  }
-}
-
-@media (max-width: 480px) {
-  .navbar {
-    bottom: 10px;
-    top: auto;
-    width: 90%;
-    max-width: 95%;
-    padding: 8px;
-    overflow-x: scroll;
-    scrollbar-width: none; /* Hide scrollbar for Firefox */
-    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
-  }
-  
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  .navbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .canvas-wrapper {
-    padding-top: 0;
-    padding-bottom: 60px; /* Reduced from 70px */
-    height: 100vh;
-  }
-
-  .zoom-controls {
-    bottom: 70px;
-  }
-}
-
-/* Handle orientation changes */
-@media (orientation: landscape) and (max-height: 500px) {
-  .navbar {
-    bottom: 10px;
-    top: auto;
-    max-width: 90%;
-    overflow-x: scroll;
-    scrollbar-width: none; /* Hide scrollbar for Firefox */
-    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
-  }
-  
-  /* Hide scrollbar for Chrome, Safari and Opera */
-  .navbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .canvas-wrapper {
-    padding-top: 0;
-    padding-bottom: 60px; /* Reduced from 70px */
-    height: 100vh;
-    width: 100vw;
-  }
-
-  .tool-group {
-    padding-right: 8px;
-    gap: 4px;
-  }
-
-  .zoom-button,
-  .tool-button {
-    width: 32px;
-    height: 32px;
-  }
 }
 
 .color-picker {
@@ -508,6 +450,126 @@ button:disabled {
   overflow-y: auto;
 }
 
+/* Add visual indication that navbar can be scrolled */
+.navbar::after {
+  content: '';
+  display: block;
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 20px;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.8), transparent);
+  pointer-events: none;
+}
+
+.dark .navbar::after {
+  background: linear-gradient(to left, rgba(42, 42, 42, 0.8), transparent);
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+  .navbar {
+    top: 10px;
+    padding: 8px;
+    display: block; /* Ensure scrolling works on mobile */
+    min-width: 200px; /* Give minimum width */
+  }
+
+  .navbar-content {
+    width: max-content;
+    padding-right: 8px; /* Give some space at the end for scrolling */
+  }
+
+  .tool-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .tool-group {
+    padding-right: 12px;
+  }
+
+  .color-circle {
+    width: 20px;
+    height: 20px;
+  }
+
+  .zoom-controls {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .zoom-button {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    bottom: 10px;
+    top: auto;
+    width: 90%;
+    max-width: 95%;
+    padding: 8px;
+    overflow-x: auto;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .navbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .navbar-content {
+    width: max-content; /* Force content to be as wide as needed */
+    display: flex;
+    align-items: center;
+    padding-right: 16px; /* Add some padding at the end for visual clarity */
+  }
+
+  .zoom-controls {
+    bottom: 70px; /* Position above navbar when at bottom */
+  }
+}
+
+/* Handle orientation changes */
+@media (orientation: landscape) and (max-height: 500px) {
+  .navbar {
+    bottom: 10px;
+    top: auto;
+    max-width: 90%;
+    overflow-x: auto;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+  }
+  
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .navbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .canvas-wrapper {
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .tool-group {
+    padding-right: 8px;
+    gap: 4px;
+  }
+
+  .zoom-button,
+  .tool-button {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Animations */
 @keyframes spin {
   0% {
     transform: rotate(0deg);
@@ -526,4 +588,24 @@ button:disabled {
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+/* Mobile touch indicators for horizontal scroll */
+.navbar.compact .navbar-content {
+  padding-right: 20px; /* Extra space at the end to indicate more content */
+}
+
+/* Ensure fabric.js canvas wrapper doesn't apply default margin */
+.canvas-container > div {
+  margin: 0 !important;
+}
+
+/* Make sure active elements are visible in both light and dark mode */
+.dark .tool-button.active svg {
+  fill: #1890ff;
+}
+
+/* Fix for potential scrollbars in iOS */
+.canvas-wrapper::-webkit-scrollbar {
+  display: none;
 }

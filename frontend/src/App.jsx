@@ -124,18 +124,33 @@ function App() {
       e.preventDefault();
     };
 
-    document.body.addEventListener("touchmove", preventPullToRefresh, {
+    // Prevent default touch behaviors to avoid pull-to-refresh and bounce effects
+    document.addEventListener("touchmove", preventPullToRefresh, {
       passive: false,
     });
+    
+    // Prevent scroll on body
+    document.body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.width = "100%";
+    document.body.style.height = "100%";
 
     return () => {
-      document.body.removeEventListener("touchmove", preventPullToRefresh);
+      document.removeEventListener("touchmove", preventPullToRefresh);
+      document.body.style.overflow = "";
+      document.body.style.position = "";
+      document.body.style.width = "";
+      document.body.style.height = "";
     };
   }, []);
 
   return (
     <div className="App">
       <div className="whiteboard-container">
+        <div className="canvas-wrapper">
+          <Canvas setCanvas={setCanvas} />
+        </div>
+        
         <Navbar
           canvas={canvas}
           activeColor={activeColor}
@@ -146,30 +161,18 @@ function App() {
           isMobile={isMobile}
           isLandscape={isLandscape}
         />
-        <div
-          className="canvas-wrapper"
-          style={{
-            position: "relative",
-            height: isMobile && isLandscape ? "100vh" : undefined,
-            width: "100vw", // Ensure full width
-            padding: 0, // Remove any padding that might affect width
-            margin: 0, // Remove any margin that might affect width
-            overflowX: "hidden", // Prevent horizontal scrolling outside canvas
-          }}
-        >
-          <Canvas setCanvas={setCanvas} />
-          <AiAnalysis
-            analysis={aiAnalysis}
-            isLoading={isLoading}
-            error={error}
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            showPromptModal={showPromptModal}
-            onPromptModalClose={() => setShowPromptModal(false)}
-            onPromptSubmit={handlePromptSubmit}
-            defaultPrompt={defaultPrompt}
-          />
-        </div>
+        
+        <AiAnalysis
+          analysis={aiAnalysis}
+          isLoading={isLoading}
+          error={error}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          showPromptModal={showPromptModal}
+          onPromptModalClose={() => setShowPromptModal(false)}
+          onPromptSubmit={handlePromptSubmit}
+          defaultPrompt={defaultPrompt}
+        />
       </div>
     </div>
   );

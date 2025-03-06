@@ -13,19 +13,27 @@ const Canvas = ({ setCanvas }) => {
   // Zoom level state
   const [zoomLevel, setZoomLevel] = useState(1);
 
+  // Function to get available canvas space
+  const getCanvasDimensions = () => {
+    const isMobile = window.innerWidth <= 768;
+    const isLandscape = window.innerWidth > window.innerHeight;
+    
+    // Calculate navbar height - navbar is positioned at top on desktop, bottom on mobile
+    const navbarHeight = 70; // Standard navbar height
+    
+    return {
+      width: window.innerWidth,
+      height: window.innerHeight - (isMobile && !isLandscape ? 0 : navbarHeight),
+    };
+  };
+
   // State to track window dimensions
-  const [dimensions, setDimensions] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight - 70, // Subtract height for navbar only
-  });
+  const [dimensions, setDimensions] = useState(getCanvasDimensions());
 
   // Handle window resize and orientation change
   useEffect(() => {
     const handleResize = () => {
-      setDimensions({
-        width: window.innerWidth,
-        height: window.innerHeight - 70, // Reduced from 120 to 70 to use more screen space
-      });
+      setDimensions(getCanvasDimensions());
     };
 
     window.addEventListener("resize", handleResize);
@@ -45,9 +53,9 @@ const Canvas = ({ setCanvas }) => {
     const container = document.querySelector(".canvas-container");
     if (!container) return;
 
-    // Calculate proper dimensions with minimal padding
-    const canvasWidth = dimensions.width - 20;  // Reduced padding from 40 to 20
-    const canvasHeight = dimensions.height - 20; // Reduced padding from 40 to 20
+    // Calculate proper dimensions - use full width and height
+    const canvasWidth = dimensions.width;
+    const canvasHeight = dimensions.height;
 
     // Create or update fabric canvas
     if (!fabricCanvasRef.current) {
@@ -189,12 +197,12 @@ const Canvas = ({ setCanvas }) => {
         className="canvas-container"
         style={{
           margin: "0",
-          padding: "10px", // Reduced padding from 20px to 10px
+          padding: "0", // Removed padding completely
           boxSizing: "border-box",
           width: "100%",
-          height: `${dimensions.height}px`,
+          height: "100%",
           position: "relative",
-          overflow: "auto",
+          overflow: "hidden", // Changed from auto to hidden to prevent scrolling
         }}
       >
         <canvas ref={canvasRef} />

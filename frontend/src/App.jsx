@@ -53,56 +53,34 @@ function App() {
     };
   }, []);
   
-  // Effect to adjust canvas clipPath to prevent drawing under navbar and zoom controls
+  // Effect to apply canvas adjustments after it's fully initialized
   useEffect(() => {
     if (canvas) {
-      const updateClipPath = () => {
-        // Reset any previous clip
-        canvas.clipPath = null;
-        
-        // Get navbar dimensions
-        const navbar = document.querySelector('.navbar');
-        const zoomControls = document.querySelector('.zoom-controls');
-        const isMobilePortrait = window.innerWidth <= 480 && window.innerWidth < window.innerHeight;
-        
-        if (navbar && zoomControls) {
-          const navbarRect = navbar.getBoundingClientRect();
-          const zoomRect = zoomControls.getBoundingClientRect();
-          
-          // Create appropriate clipPath based on device layout
-          if (isMobilePortrait) {
-            // In mobile portrait, navbar is at bottom
-            canvas.clipPath = new fabric.Rect({
-              left: 0,
-              top: 0,
-              width: canvas.width,
-              height: canvas.height - (navbarRect.height + 20), // Add padding
-              absolutePositioned: true
-            });
-          } else {
-            // In other layouts, consider both navbar and zoom controls
-            canvas.clipPath = new fabric.Rect({
-              left: 0,
-              top: 0,
-              width: canvas.width,
-              height: canvas.height,
-              absolutePositioned: true
-            });
-          }
-          
-          canvas.renderAll();
+      // Initialize canvas properties after it's fully loaded
+      const updateCanvas = () => {
+        try {
+          // Set background color based on theme
+          const isDarkMode = document.documentElement.classList.contains('dark');
+          canvas.setBackgroundColor(
+            isDarkMode ? "#1e1e1e" : "#ffffff",
+            canvas.renderAll.bind(canvas)
+          );
+        } catch (error) {
+          console.error("Error updating canvas:", error);
         }
       };
       
-      // Update clipPath initially and on resize
-      updateClipPath();
-      window.addEventListener('resize', updateClipPath);
+      // Update canvas
+      updateCanvas();
+      
+      // Listen for window resize
+      window.addEventListener('resize', updateCanvas);
       
       return () => {
-        window.removeEventListener('resize', updateClipPath);
+        window.removeEventListener('resize', updateCanvas);
       };
     }
-  }, [canvas, isMobile, isLandscape]);
+  }, [canvas]);
 
   // The default prompt
   const defaultPrompt =
@@ -110,8 +88,17 @@ function App() {
 
   // Function to handle AI analysis button click
   const handleAIAnalysisClick = (imageData) => {
-    setCurrentImageData(imageData);
-    setShowPromptModal(true);
+    if (!canvas) {
+      console.error("Canvas is not initialized");
+      return;
+    }
+    
+    try {
+      setCurrentImageData(imageData);
+      setShowPromptModal(true);
+    } catch (error) {
+      console.error("Error handling AI analysis click:", error);
+    }
   };
 
   // Function to handle prompt submission
@@ -202,16 +189,18 @@ function App() {
           <Canvas setCanvas={setCanvas} />
         </div>
         
-        <Navbar
-          canvas={canvas}
-          activeColor={activeColor}
-          setActiveColor={setActiveColor}
-          activeTool={activeTool}
-          setActiveTool={setActiveTool}
-          processWithAI={handleAIAnalysisClick}
-          isMobile={isMobile}
-          isLandscape={isLandscape}
-        />
+        {canvas && (
+          <Navbar
+            canvas={canvas}
+            activeColor={activeColor}
+            setActiveColor={setActiveColor}
+            activeTool={activeTool}
+            setActiveTool={setActiveTool}
+            processWithAI={handleAIAnalysisClick}
+            isMobile={isMobile}
+            isLandscape={isLandscape}
+          />
+        )}
         
         <AiAnalysis
           analysis={aiAnalysis}

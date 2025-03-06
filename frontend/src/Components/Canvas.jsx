@@ -15,9 +15,6 @@ const Canvas = ({ setCanvas }) => {
 
   // Function to get available canvas space
   const getCanvasDimensions = () => {
-    const isMobile = window.innerWidth <= 768;
-    const isLandscape = window.innerWidth > window.innerHeight;
-    
     return {
       width: window.innerWidth,
       height: window.innerHeight,
@@ -47,47 +44,62 @@ const Canvas = ({ setCanvas }) => {
 
   // Initialize the canvas when the component mounts or dimensions change
   useEffect(() => {
-    const container = document.querySelector(".canvas-container");
-    if (!container) return;
+    // Make sure we have a canvas reference
+    if (!canvasRef.current) return;
 
     // Use the full dimensions for the canvas
     const canvasWidth = dimensions.width;
     const canvasHeight = dimensions.height;
 
-    // Create or update fabric canvas
-    if (!fabricCanvasRef.current) {
+    // Clean up existing canvas if it exists
+    if (fabricCanvasRef.current) {
+      fabricCanvasRef.current.dispose();
+      fabricCanvasRef.current = null;
+    }
+
+    // Create a new fabric canvas with proper error handling
+    try {
       fabricCanvasRef.current = new fabric.Canvas(canvasRef.current, {
         width: canvasWidth,
         height: canvasHeight,
         backgroundColor: darkMode ? "#1e1e1e" : "#ffffff",
         preserveObjectStacking: true,
+        selection: true, // Enable object selection
       });
 
-      // Set canvas to parent component
-      setCanvas(fabricCanvasRef.current);
-    } else {
-      // Resize existing canvas
-      fabricCanvasRef.current.setWidth(canvasWidth);
-      fabricCanvasRef.current.setHeight(canvasHeight);
-      fabricCanvasRef.current.setBackgroundColor(
-        darkMode ? "#1e1e1e" : "#ffffff", 
-        fabricCanvasRef.current.renderAll.bind(fabricCanvasRef.current)
-      );
-      fabricCanvasRef.current.calcOffset();
-      fabricCanvasRef.current.renderAll();
+      // Set canvas to parent component only after successful initialization
+      if (fabricCanvasRef.current) {
+        setCanvas(fabricCanvasRef.current);
+        
+        // Apply zoom level
+        applyZoomLevel();
+      }
+    } catch (error) {
+      console.error("Error initializing canvas:", error);
     }
-
-    // Apply zoom level
-    applyZoomLevel();
 
     // Clean up function
     return () => {
       if (fabricCanvasRef.current) {
-        fabricCanvasRef.current.dispose();
+        try {
+          fabricCanvasRef.current.dispose();
+        } catch (error) {
+          console.error("Error disposing canvas:", error);
+        }
         fabricCanvasRef.current = null;
       }
     };
   }, [dimensions, setCanvas, darkMode]); // Dependencies include dimensions and dark mode
+
+  // Update canvas background when dark mode changes
+  useEffect(() => {
+    if (fabricCanvasRef.current) {
+      fabricCanvasRef.current.setBackgroundColor(
+        darkMode ? "#1e1e1e" : "#ffffff",
+        () => fabricCanvasRef.current.renderAll()
+      );
+    }
+  }, [darkMode]);
 
   // Apply zoom when zoom level changes
   useEffect(() => {
@@ -98,8 +110,12 @@ const Canvas = ({ setCanvas }) => {
   const applyZoomLevel = () => {
     if (!fabricCanvasRef.current) return;
 
-    fabricCanvasRef.current.setZoom(zoomLevel);
-    fabricCanvasRef.current.renderAll();
+    try {
+      fabricCanvasRef.current.setZoom(zoomLevel);
+      fabricCanvasRef.current.renderAll();
+    } catch (error) {
+      console.error("Error applying zoom:", error);
+    }
   };
 
   // Zoom in function
@@ -171,21 +187,21 @@ const Canvas = ({ setCanvas }) => {
     };
 
     const canvasElement = canvas.wrapperEl;
-    canvasElement.addEventListener("touchstart", touchStartHandler, {
-      passive: false,
-    });
-    canvasElement.addEventListener("touchmove", touchMoveHandler, {
-      passive: false,
-    });
-    canvasElement.addEventListener("touchend", touchEndHandler);
+    if (canvasElement) {
+      canvasElement.addEventListener("touchstart", touchStartHandler, {
+        passive: false,
+      });
+      canvasElement.addEventListener("touchmove", touchMoveHandler, {
+        passive: false,
+      });
+      canvasElement.addEventListener("touchend", touchEndHandler);
 
-    return () => {
-      if (canvasElement) {
+      return () => {
         canvasElement.removeEventListener("touchstart", touchStartHandler);
         canvasElement.removeEventListener("touchmove", touchMoveHandler);
         canvasElement.removeEventListener("touchend", touchEndHandler);
-      }
-    };
+      };
+    }
   }, [zoomLevel]);
 
   return (
@@ -205,7 +221,7 @@ const Canvas = ({ setCanvas }) => {
         <canvas ref={canvasRef} />
       </div>
 
-      {/* Zoom controls - moved to top-right for better visibility */}
+      {/* Zoom controls */}
       <div className="zoom-controls">
         <button onClick={zoomOut} className="zoom-button" title="Zoom Out">
           <svg

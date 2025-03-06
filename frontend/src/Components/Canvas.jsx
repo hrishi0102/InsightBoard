@@ -18,12 +18,9 @@ const Canvas = ({ setCanvas }) => {
     const isMobile = window.innerWidth <= 768;
     const isLandscape = window.innerWidth > window.innerHeight;
     
-    // Calculate navbar height - navbar is positioned at top on desktop, bottom on mobile
-    const navbarHeight = 70; // Standard navbar height
-    
     return {
       width: window.innerWidth,
-      height: window.innerHeight - (isMobile && !isLandscape ? 0 : navbarHeight),
+      height: window.innerHeight,
     };
   };
 
@@ -53,7 +50,7 @@ const Canvas = ({ setCanvas }) => {
     const container = document.querySelector(".canvas-container");
     if (!container) return;
 
-    // Calculate proper dimensions - use full width and height
+    // Use the full dimensions for the canvas
     const canvasWidth = dimensions.width;
     const canvasHeight = dimensions.height;
 
@@ -197,18 +194,18 @@ const Canvas = ({ setCanvas }) => {
         className="canvas-container"
         style={{
           margin: "0",
-          padding: "0", // Removed padding completely
+          padding: "0",
           boxSizing: "border-box",
           width: "100%",
           height: "100%",
           position: "relative",
-          overflow: "hidden", // Changed from auto to hidden to prevent scrolling
+          overflow: "hidden",
         }}
       >
         <canvas ref={canvasRef} />
       </div>
 
-      {/* Zoom controls */}
+      {/* Zoom controls - moved to top-right for better visibility */}
       <div className="zoom-controls">
         <button onClick={zoomOut} className="zoom-button" title="Zoom Out">
           <svg

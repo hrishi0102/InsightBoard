@@ -52,6 +52,57 @@ function App() {
       );
     };
   }, []);
+  
+  // Effect to adjust canvas clipPath to prevent drawing under navbar and zoom controls
+  useEffect(() => {
+    if (canvas) {
+      const updateClipPath = () => {
+        // Reset any previous clip
+        canvas.clipPath = null;
+        
+        // Get navbar dimensions
+        const navbar = document.querySelector('.navbar');
+        const zoomControls = document.querySelector('.zoom-controls');
+        const isMobilePortrait = window.innerWidth <= 480 && window.innerWidth < window.innerHeight;
+        
+        if (navbar && zoomControls) {
+          const navbarRect = navbar.getBoundingClientRect();
+          const zoomRect = zoomControls.getBoundingClientRect();
+          
+          // Create appropriate clipPath based on device layout
+          if (isMobilePortrait) {
+            // In mobile portrait, navbar is at bottom
+            canvas.clipPath = new fabric.Rect({
+              left: 0,
+              top: 0,
+              width: canvas.width,
+              height: canvas.height - (navbarRect.height + 20), // Add padding
+              absolutePositioned: true
+            });
+          } else {
+            // In other layouts, consider both navbar and zoom controls
+            canvas.clipPath = new fabric.Rect({
+              left: 0,
+              top: 0,
+              width: canvas.width,
+              height: canvas.height,
+              absolutePositioned: true
+            });
+          }
+          
+          canvas.renderAll();
+        }
+      };
+      
+      // Update clipPath initially and on resize
+      updateClipPath();
+      window.addEventListener('resize', updateClipPath);
+      
+      return () => {
+        window.removeEventListener('resize', updateClipPath);
+      };
+    }
+  }, [canvas, isMobile, isLandscape]);
 
   // The default prompt
   const defaultPrompt =

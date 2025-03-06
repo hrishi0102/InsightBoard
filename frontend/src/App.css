@@ -65,15 +65,21 @@ html {
   -ms-overflow-style: -ms-autohiding-scrollbar; /* Hide scrollbar by default in Edge */
 }
 
-/* Make sure the scrollbar works on mobile */
+/* Make scrollbar visible on the navbar */
 .navbar::-webkit-scrollbar {
-  height: 4px;
-  background: transparent;
+  height: 6px;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+  display: block;
 }
 
 .navbar::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
+  border-radius: 3px;
+}
+
+.dark .navbar::-webkit-scrollbar {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .dark .navbar::-webkit-scrollbar-thumb {
@@ -90,6 +96,7 @@ html {
   align-items: center;
   gap: 16px;
   min-width: max-content; /* Ensure content doesn't wrap on small screens */
+  padding-bottom: 6px; /* Add space for scrollbar */
 }
 
 .tool-section {
@@ -308,10 +315,10 @@ h1 {
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
-/* Zoom controls */
+/* Repositioned zoom controls - moved to top right for better visibility */
 .zoom-controls {
   position: fixed;
-  bottom: 20px;
+  top: 20px;
   right: 20px;
   display: flex;
   gap: 8px;
@@ -496,7 +503,7 @@ button:disabled {
   }
 
   .zoom-controls {
-    bottom: 10px;
+    top: 10px;
     right: 10px;
   }
 
@@ -514,14 +521,13 @@ button:disabled {
     max-width: 95%;
     padding: 8px;
     overflow-x: auto;
-    scrollbar-width: none; /* Hide scrollbar for Firefox */
-    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
     -webkit-overflow-scrolling: touch;
   }
   
-  /* Hide scrollbar for Chrome, Safari and Opera */
+  /* Make scrollbar always visible on mobile */
   .navbar::-webkit-scrollbar {
-    display: none;
+    display: block;
+    height: 4px;
   }
 
   .navbar-content {
@@ -532,7 +538,9 @@ button:disabled {
   }
 
   .zoom-controls {
-    bottom: 70px; /* Position above navbar when at bottom */
+    top: 10px;
+    right: 10px;
+    bottom: auto;
   }
 }
 
@@ -543,18 +551,13 @@ button:disabled {
     top: auto;
     max-width: 90%;
     overflow-x: auto;
-    scrollbar-width: none; /* Hide scrollbar for Firefox */
-    -ms-overflow-style: none; /* Hide scrollbar for IE and Edge */
+    scrollbar-width: thin; /* Thin scrollbar for Firefox */
   }
   
-  /* Hide scrollbar for Chrome, Safari and Opera */
+  /* Make scrollbar always visible on mobile landscape */
   .navbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .canvas-wrapper {
-    width: 100vw;
-    height: 100vh;
+    display: block;
+    height: 4px;
   }
 
   .tool-group {
@@ -566,6 +569,12 @@ button:disabled {
   .tool-button {
     width: 32px;
     height: 32px;
+  }
+  
+  .zoom-controls {
+    top: 10px;
+    right: 10px;
+    bottom: auto;
   }
 }
 
@@ -608,4 +617,55 @@ button:disabled {
 /* Fix for potential scrollbars in iOS */
 .canvas-wrapper::-webkit-scrollbar {
   display: none;
+}
+
+/* Ensure no bottom gap in canvas in portrait mode */
+@media (max-width: 480px) {
+  .canvas-container {
+    bottom: 0;
+    height: calc(100% - 60px); /* Add space only at bottom for navbar */
+  }
+}
+
+/* Fix zoom controls for better visibility */
+.zoom-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.zoom-button svg {
+  width: 20px;
+  height: 20px;
+  fill: none; /* Since the SVG uses stroke */
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Add more prominent scrollbar for touchscreens */
+@media (pointer: coarse) {
+  .navbar::-webkit-scrollbar {
+    height: 8px;
+  }
+  
+  .navbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .dark .navbar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Ensure the canvas takes up full space */
+.canvas-container .upper-canvas,
+.canvas-container .lower-canvas {
+  width: 100% !important;
+  height: 100% !important;
 }

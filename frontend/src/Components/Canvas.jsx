@@ -16,7 +16,7 @@ const Canvas = ({ setCanvas }) => {
   // State to track window dimensions
   const [dimensions, setDimensions] = useState({
     width: window.innerWidth,
-    height: window.innerHeight - 120, // Subtract height for toolbar and header
+    height: window.innerHeight - 70, // Subtract height for navbar only
   });
 
   // Handle window resize and orientation change
@@ -24,7 +24,7 @@ const Canvas = ({ setCanvas }) => {
     const handleResize = () => {
       setDimensions({
         width: window.innerWidth,
-        height: window.innerHeight - 120,
+        height: window.innerHeight - 70, // Reduced from 120 to 70 to use more screen space
       });
     };
 
@@ -45,9 +45,9 @@ const Canvas = ({ setCanvas }) => {
     const container = document.querySelector(".canvas-container");
     if (!container) return;
 
-    // Calculate proper dimensions with padding
-    const canvasWidth = dimensions.width - 40;
-    const canvasHeight = dimensions.height - 40;
+    // Calculate proper dimensions with minimal padding
+    const canvasWidth = dimensions.width - 20;  // Reduced padding from 40 to 20
+    const canvasHeight = dimensions.height - 20; // Reduced padding from 40 to 20
 
     // Create or update fabric canvas
     if (!fabricCanvasRef.current) {
@@ -189,7 +189,7 @@ const Canvas = ({ setCanvas }) => {
         className="canvas-container"
         style={{
           margin: "0",
-          padding: "20px",
+          padding: "10px", // Reduced padding from 20px to 10px
           boxSizing: "border-box",
           width: "100%",
           height: `${dimensions.height}px`,

@@ -151,6 +151,10 @@ function App() {
           style={{
             position: "relative",
             height: isMobile && isLandscape ? "100vh" : undefined,
+            width: "100vw", // Ensure full width
+            padding: 0, // Remove any padding that might affect width
+            margin: 0, // Remove any margin that might affect width
+            overflowX: "hidden", // Prevent horizontal scrolling outside canvas
           }}
         >
           <Canvas setCanvas={setCanvas} />
